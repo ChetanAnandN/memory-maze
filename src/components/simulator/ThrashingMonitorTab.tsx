@@ -220,7 +220,7 @@ const ThrashingMonitorTab: React.FC<ThrashingMonitorTabProps> = ({ darkMode }) =
         <div className="sim-panel animate-fade-in">
           <h2 className="text-xl font-semibold mb-4">System Performance Over Time</h2>
           
-          <ResponsiveContainer width="100%" height={350}>
+          <ResponsiveContainer width="100%" height={300}>
             <LineChart data={thrashingData}>
               <CartesianGrid 
                 strokeDasharray="3 3" 
@@ -232,16 +232,8 @@ const ThrashingMonitorTab: React.FC<ThrashingMonitorTabProps> = ({ darkMode }) =
                 label={{ value: 'Time', position: 'bottom', offset: -5 }}
               />
               <YAxis 
-                yAxisId="left"
-                stroke="hsl(142 76% 36%)" 
-                label={{ value: 'CPU Utilization %', angle: -90, position: 'insideLeft', style: { fill: 'hsl(142 76% 36%)' } }}
-                domain={[0, 100]}
-              />
-              <YAxis 
-                yAxisId="right"
-                orientation="right"
-                stroke="hsl(0 84% 60%)" 
-                label={{ value: 'Page Fault Rate %', angle: 90, position: 'insideRight', style: { fill: 'hsl(0 84% 60%)' } }}
+                stroke={darkMode ? 'hsl(215 20% 65%)' : 'hsl(215 16% 47%)'} 
+                label={{ value: 'Percentage', angle: -90, position: 'insideLeft' }}
                 domain={[0, 100]}
               />
               <Tooltip
@@ -252,7 +244,6 @@ const ThrashingMonitorTab: React.FC<ThrashingMonitorTabProps> = ({ darkMode }) =
               />
               <Legend />
               <Line 
-                yAxisId="right"
                 type="monotone" 
                 dataKey="faultRate" 
                 stroke="hsl(0 84% 60%)" 
@@ -261,7 +252,6 @@ const ThrashingMonitorTab: React.FC<ThrashingMonitorTabProps> = ({ darkMode }) =
                 name="Page Fault Rate %" 
               />
               <Line 
-                yAxisId="left"
                 type="monotone" 
                 dataKey="cpuUtil" 
                 stroke="hsl(142 76% 36%)" 
