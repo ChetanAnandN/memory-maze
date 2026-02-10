@@ -31,6 +31,9 @@ const DemandPagingTab: React.FC<DemandPagingTabProps> = ({ darkMode }) => {
   
   // Log of operations
   const [operationLog, setOperationLog] = useState<string[]>([]);
+  
+  // FIFO queue to track the order pages were loaded into RAM
+  const [fifoQueue, setFifoQueue] = useState<number[]>([]);
 
   /**
    * Handles a page request from the user
@@ -70,17 +73,19 @@ const DemandPagingTab: React.FC<DemandPagingTabProps> = ({ darkMode }) => {
       newFrames[emptyFrameIdx] = page;
       setRamFrames(newFrames);
       setDiskPages(diskPages.filter(p => p !== page));
+      setFifoQueue(prev => [...prev, page]);
       setOperationLog(prev => [
         ...prev, 
         `Page ${page} loaded into Frame ${emptyFrameIdx} (empty frame available)`
       ]);
     } else {
-      // RAM is full - need to swap out a page
-      const victimIdx = Math.floor(Math.random() * ramFrames.length);
-      const victim = ramFrames[victimIdx];
+      // RAM is full - use FIFO to select victim (oldest page loaded)
+      const victim = fifoQueue[0]; // Oldest page in the queue
+      const victimIdx = ramFrames.indexOf(victim);
       const newFrames = [...ramFrames];
       newFrames[victimIdx] = page;
       setRamFrames(newFrames);
+      setFifoQueue(prev => [...prev.slice(1), page]); // Remove oldest, add new
       
       // Update disk: remove new page, add victim back
       setDiskPages(
@@ -89,7 +94,7 @@ const DemandPagingTab: React.FC<DemandPagingTabProps> = ({ darkMode }) => {
       
       setOperationLog(prev => [
         ...prev, 
-        `Page ${page} loaded into Frame ${victimIdx}. Page ${victim} swapped out to disk.`
+        `Page ${page} loaded into Frame ${victimIdx}. Page ${victim} swapped out to disk (FIFO - oldest page).`
       ]);
     }
     
@@ -103,6 +108,7 @@ const DemandPagingTab: React.FC<DemandPagingTabProps> = ({ darkMode }) => {
     setDiskPages([0, 1, 2, 3, 4, 5, 6, 7]);
     setRamFrames(Array(4).fill(null));
     setOperationLog([]);
+    setFifoQueue([]);
   };
 
   return (
