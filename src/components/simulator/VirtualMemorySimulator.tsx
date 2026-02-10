@@ -77,7 +77,7 @@ const VirtualMemorySimulator: React.FC = () => {
           <div className="flex justify-between items-center">
             <div>
               <h1 className="text-xl sm:text-2xl font-bold">
-                Virtual Memory Simulator
+                Virtual Memory Dashboard
               </h1>
               <p className="text-sm text-muted-foreground hidden sm:block">
                 Interactive Operating Systems Learning Tool

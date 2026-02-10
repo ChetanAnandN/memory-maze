@@ -13,7 +13,7 @@
 
 import React, { useState } from 'react';
 import { AlertTriangle } from 'lucide-react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { AreaChart, Area, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ThrashingDataPoint } from './types';
@@ -220,8 +220,8 @@ const ThrashingMonitorTab: React.FC<ThrashingMonitorTabProps> = ({ darkMode }) =
         <div className="sim-panel animate-fade-in">
           <h2 className="text-xl font-semibold mb-4">System Performance Over Time</h2>
           
-          <ResponsiveContainer width="100%" height={300}>
-            <AreaChart data={thrashingData}>
+          <ResponsiveContainer width="100%" height={350}>
+            <LineChart data={thrashingData}>
               <CartesianGrid 
                 strokeDasharray="3 3" 
                 stroke={darkMode ? 'hsl(217 33% 25%)' : 'hsl(214 32% 91%)'} 
@@ -229,11 +229,20 @@ const ThrashingMonitorTab: React.FC<ThrashingMonitorTabProps> = ({ darkMode }) =
               <XAxis 
                 dataKey="time" 
                 stroke={darkMode ? 'hsl(215 20% 65%)' : 'hsl(215 16% 47%)'} 
-                label={{ value: 'Time', position: 'bottom' }}
+                label={{ value: 'Time', position: 'bottom', offset: -5 }}
               />
               <YAxis 
-                stroke={darkMode ? 'hsl(215 20% 65%)' : 'hsl(215 16% 47%)'} 
-                label={{ value: 'Percentage', angle: -90, position: 'insideLeft' }}
+                yAxisId="left"
+                stroke="hsl(142 76% 36%)" 
+                label={{ value: 'CPU Utilization %', angle: -90, position: 'insideLeft', style: { fill: 'hsl(142 76% 36%)' } }}
+                domain={[0, 100]}
+              />
+              <YAxis 
+                yAxisId="right"
+                orientation="right"
+                stroke="hsl(0 84% 60%)" 
+                label={{ value: 'Page Fault Rate %', angle: 90, position: 'insideRight', style: { fill: 'hsl(0 84% 60%)' } }}
+                domain={[0, 100]}
               />
               <Tooltip
                 contentStyle={{
@@ -242,25 +251,25 @@ const ThrashingMonitorTab: React.FC<ThrashingMonitorTabProps> = ({ darkMode }) =
                 }}
               />
               <Legend />
-              <Area 
+              <Line 
+                yAxisId="right"
                 type="monotone" 
                 dataKey="faultRate" 
-                stackId="1" 
                 stroke="hsl(0 84% 60%)" 
-                fill="hsl(0 84% 60%)" 
-                fillOpacity={0.6} 
+                strokeWidth={2}
+                dot={false}
                 name="Page Fault Rate %" 
               />
-              <Area 
+              <Line 
+                yAxisId="left"
                 type="monotone" 
                 dataKey="cpuUtil" 
-                stackId="2" 
                 stroke="hsl(142 76% 36%)" 
-                fill="hsl(142 76% 36%)" 
-                fillOpacity={0.6} 
+                strokeWidth={2}
+                dot={false}
                 name="CPU Utilization %" 
               />
-            </AreaChart>
+            </LineChart>
           </ResponsiveContainer>
         </div>
       )}
